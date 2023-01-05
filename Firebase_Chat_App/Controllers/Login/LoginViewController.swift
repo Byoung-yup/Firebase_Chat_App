@@ -220,7 +220,7 @@ extension LoginViewController: LoginButtonDelegate {
             return
         }
         
-        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, name"], tokenString: token, version: nil, httpMethod: .get)
+        let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me", parameters: ["fields": "email, first_name, last_name, picture.type(large)"], tokenString: token, version: nil, httpMethod: .get)
         
         facebookRequest.start { _, result, error in
             guard let result = result as? [String: Any], error == nil else {
@@ -229,20 +229,58 @@ extension LoginViewController: LoginButtonDelegate {
             }
             
             print(result)
-            guard var userName = result["name"] as? String, let email = result["email"] as? String else {
+            
+            guard let firstName = result["first_name"] as? String,
+                  let lastName = result["last_name"] as? String,
+                  let email = result["email"] as? String,
+                  let picture = result["picture"] as? [String: Any],
+                  let data = picture["data"] as? [String: Any],
+                  let pictureUrl = data["url"] as? String
+            else {
                 print("Failed to get email and name from fb result")
                 return
             }
             
-            userName.insert(" ", at: userName.index(userName.startIndex, offsetBy: 1))
-            let nameComponents = userName.components(separatedBy: " ")
+            
+//            userName.insert(" ", at: userName.index(userName.startIndex, offsetBy: 1))
+//            let nameComponents = userName.components(separatedBy: " ")
 
-            let firstName = nameComponents[0]
-            let lastName = nameComponents[1]
+//            let firstName = nameComponents[0]
+//            let lastName = nameComponents[1]
             
             DatabaseManager.shard.userExists(with: email) { exists in
                 if !exists {
-                    DatabaseManager.shard.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                    let chatUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
+                    DatabaseManager.shard.insertUser(with: chatUser) { success in
+                        if success {
+                            
+                            guard let url = URL(string: pictureUrl) else {
+                                return
+                            }
+                            
+                            print("Downloading data from facebook image")
+                            
+                            URLSession.shared.dataTask(with: url) { data, _, error in
+                                guard let data = data else {
+                                    print("Failed to get data from facebook")
+                                    return
+                                }
+                                
+                                // upload image
+                                let fileNmae = chatUser.profilePictureFileName
+                                StorageManager.shard.uploadProfilePicture(with: data, fileName: fileNmae) { result in
+                                    switch result {
+                                    case .success(let downloadUrl):
+                                        UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                        print(downloadUrl)
+                                    case .failure(let error):
+                                        print("Storage manager error: \(error)")
+                                    }
+                                }
+                            }
+                            .resume()
+                        }
+                    }
                 }
             }
             

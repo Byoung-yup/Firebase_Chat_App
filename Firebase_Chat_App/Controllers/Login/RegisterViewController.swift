@@ -186,7 +186,26 @@ class RegisterViewController: UIViewController {
                     return
                 }
                 
-                DatabaseManager.shard.insertUser(with: ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email))
+                let chatUser = ChatAppUser(firstName: firstName, lastName: lastName, emailAddress: email)
+                
+                DatabaseManager.shard.insertUser(with: chatUser) { success in
+                    if success {
+                        // upload image
+                        guard let image = self.imageView.image, let data = image.pngData() else {
+                            return
+                        }
+                        let fileNmae = chatUser.profilePictureFileName
+                        StorageManager.shard.uploadProfilePicture(with: data, fileName: fileNmae) { result in
+                            switch result {
+                            case .success(let downloadUrl):
+                                UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                print(downloadUrl)
+                            case .failure(let error):
+                                print("Storage manager error: \(error)")
+                            }
+                        }
+                    }
+                }
                 self.navigationController?.dismiss(animated: true)
             }
         }
