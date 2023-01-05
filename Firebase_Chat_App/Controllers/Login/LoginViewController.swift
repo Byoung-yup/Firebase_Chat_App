@@ -6,10 +6,15 @@
 //
 
 import UIKit
+import Firebase
 import FirebaseAuth
 import FBSDKLoginKit
+import GoogleSignIn
+import JGProgressHUD
 
 class LoginViewController: UIViewController {
+    
+    private let spinner = JGProgressHUD(style: .dark)
     
     private let scrollView: UIScrollView = {
         let scrollView = UIScrollView()
@@ -75,6 +80,13 @@ class LoginViewController: UIViewController {
         return fbBtn
     }()
     
+    private let googleLoginButton: GIDSignInButton = {
+        let googleBtn = GIDSignInButton()
+        googleBtn.layer.cornerRadius = 12
+        googleBtn.layer.masksToBounds = true
+        return googleBtn
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "Log In"
@@ -86,10 +98,12 @@ class LoginViewController: UIViewController {
                                                             action: #selector(didTapRegister))
         
         loginButton.addTarget(self, action: #selector(loginButtonTapped), for: .touchUpInside)
+//        googleLoginButton.addTarget(self, action: #selector(googleLoginButtonTapped), for: .touchUpInside)
         
         emailField.delegate = self
         passwordField.delegate = self
         facebookLoginButton.delegate = self
+        
         
         // Add subviews
         view.addSubview(scrollView)
@@ -98,6 +112,7 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
+        scrollView.addSubview(googleLoginButton)
     }
     
     override func viewDidLayoutSubviews() {
@@ -109,6 +124,7 @@ class LoginViewController: UIViewController {
         passwordField.frame = CGRect(x: 30, y: emailField.bottom + 10, width: scrollView.width - 60, height: 52)
         loginButton.frame = CGRect(x: 30, y: passwordField.bottom + 10, width: scrollView.width - 60, height: 52)
         facebookLoginButton.frame = CGRect(x: 30, y: loginButton.bottom + 10, width: scrollView.width - 60, height: 52)
+        googleLoginButton.frame = CGRect(x: 30, y: facebookLoginButton.bottom + 10, width: scrollView.width - 60, height: 52)
     }
     
     @objc private func loginButtonTapped() {
@@ -121,9 +137,16 @@ class LoginViewController: UIViewController {
             return
         }
         
+        spinner.show(in: view)
+        
         // Firebase Log In
         FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
             guard let self = self else { return }
+            
+            DispatchQueue.main.async {
+                self.spinner.dismiss()
+            }
+            
             guard let result = authResult, error == nil else {
                 print("Failed to log in user with email: \(email)")
                 return
@@ -134,6 +157,29 @@ class LoginViewController: UIViewController {
             self.navigationController?.dismiss(animated: true)
         }
     }
+    
+//    @objc func googleLoginButtonTapped(_ sender: GIDSignInButton) {
+//        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+//
+//        // Create Google Sign In configuration object.
+//        let config = GIDConfiguration(clientID: clientID)
+//
+//
+//        GIDSignIn.sharedInstance.signIn(withPresenting: self) { result, error in
+//            guard error == nil else {
+//                print("Failed to google log in")
+//                return
+//            }
+//
+//            guard let accessToken = result?.user.accessToken as? String,
+//                  let idToken = result?.user.idToken as? String else {
+//                return
+//            }
+//
+//            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+//                                                             accessToken: accessToken)
+//        }
+//    }
     
     func alertUserLoginError() {
         let alert = UIAlertController(title: "Error", message: "Please enter all information to log in", preferredStyle: .alert)
