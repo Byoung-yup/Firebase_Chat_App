@@ -153,6 +153,9 @@ class LoginViewController: UIViewController {
             }
             
             let user = result.user
+            
+            UserDefaults.standard.set(email, forKey: "email")
+            
             print("Logged In User: \(user)")
             self.navigationController?.dismiss(animated: true)
         }
@@ -241,7 +244,7 @@ extension LoginViewController: LoginButtonDelegate {
                 return
             }
             
-            
+            UserDefaults.standard.set(email, forKey: "email")
 //            userName.insert(" ", at: userName.index(userName.startIndex, offsetBy: 1))
 //            let nameComponents = userName.components(separatedBy: " ")
 
