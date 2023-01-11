@@ -30,6 +30,7 @@
 		B075C4FF2966B05700336B82 /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B075C4FE2966B05700336B82 /* StorageManager.swift */; };
 		B085BA5E2963BCF900E5B9E8 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = B085BA5D2963BCF900E5B9E8 /* GoogleService-Info.plist */; };
 		B085BA602963CF7F00E5B9E8 /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B085BA5F2963CF7F00E5B9E8 /* DatabaseManager.swift */; };
+		B08936D0296BF6950061188E /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08936CF296BF6950061188E /* ConversationTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		B075C4FE2966B05700336B82 /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		B085BA5D2963BCF900E5B9E8 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		B085BA5F2963CF7F00E5B9E8 /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
+		B08936CF296BF6950061188E /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
 		CBFB05FE8743B8CA2B8DE532 /* Pods-Firebase_Chat_AppTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Firebase_Chat_AppTests.release.xcconfig"; path = "Target Support Files/Pods-Firebase_Chat_AppTests/Pods-Firebase_Chat_AppTests.release.xcconfig"; sourceTree = "<group>"; };
 		D25BD5F932E479AE8570742A /* Pods-Firebase_Chat_App.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Firebase_Chat_App.debug.xcconfig"; path = "Target Support Files/Pods-Firebase_Chat_App/Pods-Firebase_Chat_App.debug.xcconfig"; sourceTree = "<group>"; };
 		F22A21E8D29C6D2077BE5712 /* Pods_Firebase_Chat_AppTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Firebase_Chat_AppTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -221,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				B05BE598296276A700745578 /* Storyboards */,
+				B08936CF296BF6950061188E /* ConversationTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -508,6 +511,7 @@
 				B05BE5652962763200745578 /* AppDelegate.swift in Sources */,
 				B05BE5A52962788700745578 /* ProfileViewController.swift in Sources */,
 				B05BE5672962763200745578 /* SceneDelegate.swift in Sources */,
+				B08936D0296BF6950061188E /* ConversationTableViewCell.swift in Sources */,
 				B075C4FD29669E9D00336B82 /* ChatViewController.swift in Sources */,
 				B05BE59F2962784C00745578 /* PhotoViewerViewController.swift in Sources */,
 				B075C4FF2966B05700336B82 /* StorageManager.swift in Sources */,
