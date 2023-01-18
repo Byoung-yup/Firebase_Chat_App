@@ -38,6 +38,9 @@ class ProfileViewController: UIViewController {
             actionSheet.addAction(UIAlertAction(title: "Log Out", style: .destructive, handler: { [weak self] _ in
                 guard let self = self else { return }
                 
+                UserDefaults.standard.setValue(nil, forKey: "email")
+                UserDefaults.standard.setValue(nil, forKey: "name")
+                
                 // Log Out facebook
                 FBSDKLoginKit.LoginManager().logOut()
                 
@@ -68,12 +71,12 @@ class ProfileViewController: UIViewController {
         guard let email = UserDefaults.standard.value(forKey: "email") as? String else {
             return nil
         }
-        
+        print("\(UserDefaults.standard.value(forKey: "email") as? String ?? "nil")")
         let safeEmail = DatabaseManager.safeEmail(emailAddress: email)
         let fileName = safeEmail + "_profile_picture.png"
         let path = "images/"+fileName
         
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: self.view.width, height: 300))
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.width, height: 300))
         headerView.backgroundColor = .link
         
         let imageView = UIImageView(frame: CGRect(x: (view.width - 150) / 2, y: 75, width: 150, height: 150))
@@ -123,15 +126,15 @@ class ProfileTableViewCell: UITableViewCell {
     static let identifier = "ProfileTableViewCell"
     
     public func setUp(with viewModel: ProfileViewModel) {
-        self.textLabel?.text = viewModel.title
+        textLabel?.text = viewModel.title
         switch viewModel.viewModelType {
         case .info:
-            self.textLabel?.textAlignment = .left
-            self.selectionStyle = .none
+            textLabel?.textAlignment = .left
+            selectionStyle = .none
         case .logout:
-            self.textLabel?.text = "Log Out"
-            self.textLabel?.textColor = .red
-            self.textLabel?.textAlignment = .center
+            textLabel?.text = "Log Out"
+            textLabel?.textColor = .red
+            textLabel?.textAlignment = .center
         }
     }
 }

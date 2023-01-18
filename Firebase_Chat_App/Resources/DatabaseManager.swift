@@ -58,25 +58,14 @@ extension DatabaseManager {
         database.child(user.safeEmail).setValue([
             "first_name" : user.firstName,
             "last_name" : user.lastName
-        ]) { error, _ in
+        ]) { [weak self] error, _ in
+            guard let self = self else { return }
+            
             guard error == nil else {
                 print("failed to write to database")
                 completion(false)
                 return
             }
-            
-            /*
-             users => [
-             [
-             "name":
-             "safe_email":
-             ],
-             [
-             "name":
-             "safe_email":
-             ]
-             ]
-             */
             
             self.database.child("users").observeSingleEvent(of: .value) { snapshot in
                 if var usersCollection = snapshot.value as? [[String: String]] {

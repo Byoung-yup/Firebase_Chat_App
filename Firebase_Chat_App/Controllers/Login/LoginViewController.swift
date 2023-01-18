@@ -87,8 +87,16 @@ class LoginViewController: UIViewController {
         return googleBtn
     }()
     
+    private var loginObserver: NSObjectProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification, object: nil, queue: .main, using: { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.navigationController?.dismiss(animated: true)
+        })
+        
         title = "Log In"
         view.backgroundColor = .white
         
@@ -172,6 +180,7 @@ class LoginViewController: UIViewController {
             UserDefaults.standard.set(email, forKey: "email")
             
             print("Logged In User: \(user)")
+            print("\(UserDefaults.standard.value(forKey: "email") as? String ?? "nil")")
             self.navigationController?.dismiss(animated: true)
         }
     }
@@ -261,11 +270,6 @@ extension LoginViewController: LoginButtonDelegate {
             
             UserDefaults.standard.set(email, forKey: "email")
             UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
-//            userName.insert(" ", at: userName.index(userName.startIndex, offsetBy: 1))
-//            let nameComponents = userName.components(separatedBy: " ")
-
-//            let firstName = nameComponents[0]
-//            let lastName = nameComponents[1]
             
             DatabaseManager.shard.userExists(with: email) { exists in
                 if !exists {
